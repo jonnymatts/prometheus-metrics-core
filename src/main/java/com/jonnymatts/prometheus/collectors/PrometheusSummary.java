@@ -1,35 +1,32 @@
 package com.jonnymatts.prometheus.collectors;
 
-import com.jonnymatts.prometheus.configuration.SummaryMetricConfiguration;
 import com.jonnymatts.prometheus.configuration.QuantileConfiguration;
+import com.jonnymatts.prometheus.configuration.SummaryConfiguration;
 import io.prometheus.client.Collector;
 import io.prometheus.client.Summary;
 import io.prometheus.client.Summary.Builder;
 
 import java.util.List;
 
-public class JmxMetricSummary {
+public class PrometheusSummary {
     private final Summary summary;
 
-    public JmxMetricSummary() {
-        this(new SummaryMetricConfiguration(null, null, null, null));
+    public PrometheusSummary(String name,
+                             String description,
+                             String... labels) {
+        this(new SummaryConfiguration(null, null, null, name, description, labels));
     }
 
-    public JmxMetricSummary(SummaryMetricConfiguration configuration) {
+    public PrometheusSummary(SummaryConfiguration configuration) {
         this(Summary.build(), configuration);
     }
 
-    public JmxMetricSummary(Builder builder,
-                            SummaryMetricConfiguration configuration) {
+    public PrometheusSummary(Builder builder,
+                             SummaryConfiguration configuration) {
 
-        final String summaryBaseName = "jmx_metric_summary";
-        final String summaryName = configuration.getName() != null ?
-                summaryBaseName + "_" + configuration.getName() :
-                summaryBaseName;
-
-        builder.name(summaryName)
-                .help("JMX metrics backed by a summary")
-                .labelNames("bean_name", "attribute_name");
+        builder.name(configuration.getName())
+                .help(configuration.getDescription())
+                .labelNames(configuration.getLabels());
 
         final List<QuantileConfiguration> quantiles = configuration.getQuantiles();
         if(quantiles != null) {
@@ -49,7 +46,7 @@ public class JmxMetricSummary {
         this.summary = builder.create();
     }
 
-    public JmxMetricSummary(Summary summary) {
+    public PrometheusSummary(Summary summary) {
         this.summary = summary;
     }
 
@@ -77,7 +74,7 @@ public class JmxMetricSummary {
         return summary.describe();
     }
 
-    public JmxMetricSummary register() {
+    public PrometheusSummary register() {
         summary.register();
         return this;
     }
@@ -87,7 +84,7 @@ public class JmxMetricSummary {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JmxMetricSummary that = (JmxMetricSummary) o;
+        PrometheusSummary that = (PrometheusSummary) o;
 
         return summary != null ? summary.equals(that.summary) : that.summary == null;
     }

@@ -6,18 +6,18 @@ import io.prometheus.client.Gauge.Child;
 
 import java.util.List;
 
-public class JmxMetricGauge {
+public class PrometheusGauge {
     private final Gauge gauge;
 
-    public JmxMetricGauge() {
+    public PrometheusGauge(String name, String description, String... labels) {
         this.gauge = Gauge.build()
-                .name("jmx_metric_gauge")
-                .help("JMX metrics backed by a gauge")
-                .labelNames("bean_name", "attribute_name")
+                .name(name)
+                .help(description)
+                .labelNames(labels)
                 .create();
     }
 
-    public JmxMetricGauge(Gauge gauge) {
+    public PrometheusGauge(Gauge gauge) {
         this.gauge = gauge;
     }
 
@@ -53,7 +53,7 @@ public class JmxMetricGauge {
         return gauge.describe();
     }
 
-    public JmxMetricGauge register() {
+    public PrometheusGauge register() {
         gauge.register();
         return this;
     }

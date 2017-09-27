@@ -6,18 +6,18 @@ import io.prometheus.client.Counter.Child;
 
 import java.util.List;
 
-public class JmxMetricCounter {
+public class PrometheusCounter {
     private final Counter counter;
 
-    public JmxMetricCounter() {
+    public PrometheusCounter(String name, String description, String... labels) {
         this.counter = Counter.build()
-                .name("jmx_metric_counter")
-                .help("JMX metrics backed by a counter")
-                .labelNames("bean_name", "attribute_name")
+                .name(name)
+                .help(description)
+                .labelNames(labels)
                 .create();
     }
 
-    public JmxMetricCounter(Counter counter) {
+    public PrometheusCounter(Counter counter) {
         this.counter = counter;
     }
 
@@ -29,8 +29,8 @@ public class JmxMetricCounter {
         labels(beanName, attributeName).inc(amount);
     }
 
-    public double get(String beanName, String attributeName) {
-        return labels(beanName, attributeName).get();
+    public double get(String... labels) {
+        return labels(labels).get();
     }
 
     public Child labels(String... labels) {
@@ -45,7 +45,7 @@ public class JmxMetricCounter {
         return counter.describe();
     }
 
-    public JmxMetricCounter register() {
+    public PrometheusCounter register() {
         counter.register();
         return this;
     }

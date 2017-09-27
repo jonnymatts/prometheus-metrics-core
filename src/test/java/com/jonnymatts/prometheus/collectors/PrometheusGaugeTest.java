@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JmxMetricGaugeTest {
+public class PrometheusGaugeTest {
 
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
@@ -21,41 +21,41 @@ public class JmxMetricGaugeTest {
     @Mock private Gauge gauge;
     @Mock private Child gaugeChild;
 
-    private JmxMetricGauge jmxMetricGauge;
+    private PrometheusGauge prometheusGauge;
 
     @Before
     public void setUp() throws Exception {
-        jmxMetricGauge = new JmxMetricGauge(gauge);
+        prometheusGauge = new PrometheusGauge(gauge);
 
-        when(jmxMetricGauge.labels(BEAN_NAME, ATTRIBUTE_NAME)).thenReturn(gaugeChild);
+        when(prometheusGauge.labels(BEAN_NAME, ATTRIBUTE_NAME)).thenReturn(gaugeChild);
     }
 
     @Test
     public void registerCallsRegister() throws Exception {
-        final JmxMetricGauge got = jmxMetricGauge.register();
+        final PrometheusGauge got = prometheusGauge.register();
 
-        assertThat(got).isEqualTo(jmxMetricGauge);
+        assertThat(got).isEqualTo(prometheusGauge);
 
         verify(gauge).register();
     }
 
     @Test
     public void incCallsIncWithTheCorrectLabels() throws Exception {
-        jmxMetricGauge.inc(BEAN_NAME, ATTRIBUTE_NAME);
+        prometheusGauge.inc(BEAN_NAME, ATTRIBUTE_NAME);
 
         verify(gaugeChild).inc(1.0);
     }
 
     @Test
     public void decCallsDecWithTheCorrectLabels() throws Exception {
-        jmxMetricGauge.dec(BEAN_NAME, ATTRIBUTE_NAME);
+        prometheusGauge.dec(BEAN_NAME, ATTRIBUTE_NAME);
 
         verify(gaugeChild).dec(1.0);
     }
 
     @Test
     public void setCallsSetWithTheCorrectLabels() throws Exception {
-        jmxMetricGauge.set(BEAN_NAME, ATTRIBUTE_NAME, 100);
+        prometheusGauge.set(BEAN_NAME, ATTRIBUTE_NAME, 100);
 
         verify(gaugeChild).set(100);
     }

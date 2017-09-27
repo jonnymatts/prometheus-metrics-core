@@ -1,26 +1,28 @@
 package com.jonnymatts.prometheus.collectors;
 
-import com.jonnymatts.prometheus.configuration.HistogramMetricConfiguration;
 import com.jonnymatts.prometheus.configuration.ExponentialBucketConfiguration;
+import com.jonnymatts.prometheus.configuration.HistogramConfiguration;
 import com.jonnymatts.prometheus.configuration.LinearBucketConfiguration;
 import io.prometheus.client.Collector;
 import io.prometheus.client.Histogram;
 
 import java.util.List;
 
-public class JmxMetricHistogram {
+public class PrometheusHistogram {
     private final Histogram histogram;
 
-    public JmxMetricHistogram() {
-        this(new HistogramMetricConfiguration(null, null, null, null));
+    public PrometheusHistogram(String name,
+                               String description,
+                               String... labels) {
+        this(new HistogramConfiguration(null, null, null, name, description, labels));
     }
 
-    public JmxMetricHistogram(HistogramMetricConfiguration configuration) {
+    public PrometheusHistogram(HistogramConfiguration configuration) {
         this(Histogram.build(), configuration);
     }
 
-    public JmxMetricHistogram(Histogram.Builder builder,
-                              HistogramMetricConfiguration configuration) {
+    public PrometheusHistogram(Histogram.Builder builder,
+                               HistogramConfiguration configuration) {
         final String histogramBaseName = "jmx_metric_histogram";
         final String histogramName = configuration.getName() != null ?
                 histogramBaseName + "_" + configuration.getName() :
@@ -57,7 +59,7 @@ public class JmxMetricHistogram {
                 .create();
     }
 
-    public JmxMetricHistogram(Histogram histogram) {
+    public PrometheusHistogram(Histogram histogram) {
         this.histogram = histogram;
     }
 
@@ -85,7 +87,7 @@ public class JmxMetricHistogram {
         return histogram.describe();
     }
 
-    public JmxMetricHistogram register() {
+    public PrometheusHistogram register() {
         histogram.register();
         return this;
     }
@@ -103,7 +105,7 @@ public class JmxMetricHistogram {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JmxMetricHistogram that = (JmxMetricHistogram) o;
+        PrometheusHistogram that = (PrometheusHistogram) o;
 
         return histogram != null ? histogram.equals(that.histogram) : that.histogram == null;
     }

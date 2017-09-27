@@ -1,7 +1,7 @@
 package com.jonnymatts.prometheus.collectors;
 
 import com.jonnymatts.prometheus.configuration.QuantileConfiguration;
-import com.jonnymatts.prometheus.configuration.SummaryMetricConfiguration;
+import com.jonnymatts.prometheus.configuration.SummaryConfiguration;
 import io.prometheus.client.Summary;
 import io.prometheus.client.Summary.Builder;
 import io.prometheus.client.Summary.Child;
@@ -13,12 +13,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JmxMetricSummaryTest {
+public class PrometheusSummaryTest {
 
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
@@ -28,50 +27,50 @@ public class JmxMetricSummaryTest {
     @Mock private Child summaryChild;
     @Mock private Runnable runnable;
 
-    private JmxMetricSummary jmxMetricSummary;
+    private PrometheusSummary prometheusSummary;
 
     @Before
     public void setUp() throws Exception {
-        jmxMetricSummary = new JmxMetricSummary(summary);
+        prometheusSummary = new PrometheusSummary(summary);
 
-        when(jmxMetricSummary.labels(BEAN_NAME, ATTRIBUTE_NAME)).thenReturn(summaryChild);
+        when(prometheusSummary.labels(BEAN_NAME, ATTRIBUTE_NAME)).thenReturn(summaryChild);
     }
 
     @Test
     public void registerCallsRegister() throws Exception {
-        final JmxMetricSummary got = jmxMetricSummary.register();
+        final PrometheusSummary got = prometheusSummary.register();
 
-        assertThat(got).isEqualTo(jmxMetricSummary);
+        assertThat(got).isEqualTo(prometheusSummary);
 
         verify(summary).register();
     }
 
     @Test
     public void observeCallsObserveWithTheCorrectLabels() throws Exception {
-        jmxMetricSummary.observe(BEAN_NAME, ATTRIBUTE_NAME, 100d);
+        prometheusSummary.observe(BEAN_NAME, ATTRIBUTE_NAME, 100d);
 
         verify(summaryChild).observe(100d);
     }
 
     @Test
     public void startTimerCallsGetWithTheCorrectLabels() throws Exception {
-        jmxMetricSummary.startTimer(BEAN_NAME, ATTRIBUTE_NAME);
+        prometheusSummary.startTimer(BEAN_NAME, ATTRIBUTE_NAME);
 
         verify(summaryChild).startTimer();
     }
 
     @Test
     public void timeCallsGetWithTheCorrectLabels() throws Exception {
-        jmxMetricSummary.time(BEAN_NAME, ATTRIBUTE_NAME, runnable);
+        prometheusSummary.time(BEAN_NAME, ATTRIBUTE_NAME, runnable);
 
         verify(summaryChild).time(runnable);
     }
 
     @Test
     public void constructorAppliesConfigurationCorrectly() throws Exception {
-        when(summaryBuilder.name("jmx_metric_summary_my_summary")).thenReturn(summaryBuilder);
-        when(summaryBuilder.help(any())).thenReturn(summaryBuilder);
-        when(summaryBuilder.labelNames(any())).thenReturn(summaryBuilder);
+        when(summaryBuilder.name("my_summary")).thenReturn(summaryBuilder);
+        when(summaryBuilder.help("description")).thenReturn(summaryBuilder);
+        when(summaryBuilder.labelNames("label1", "label2")).thenReturn(summaryBuilder);
         when(summaryBuilder.quantile(0.001d, 1)).thenReturn(summaryBuilder);
         when(summaryBuilder.quantile(0.01d, 2)).thenReturn(summaryBuilder);
         when(summaryBuilder.quantile(0.1d, 3)).thenReturn(summaryBuilder);
@@ -79,21 +78,23 @@ public class JmxMetricSummaryTest {
         when(summaryBuilder.maxAgeSeconds(200)).thenReturn(summaryBuilder);
         when(summaryBuilder.create()).thenReturn(summary);
 
-        final JmxMetricSummary got = new JmxMetricSummary(
+        final PrometheusSummary got = new PrometheusSummary(
                 summaryBuilder,
-                new SummaryMetricConfiguration(
-                        "my_summary",
+                new SummaryConfiguration(
                         asList(
                                 new QuantileConfiguration(0.001d, 1d),
                                 new QuantileConfiguration(0.01d, 2d),
                                 new QuantileConfiguration(0.1d, 3d)
-                        ),
+                                ),
                         100,
-                        200L
-                )
+                        200L,
+                        "my_summary",
+                        "description",
+                        "label1", "label2"
+                        )
         );
 
-        assertThat(got).isEqualTo(new JmxMetricSummary(summary));
+        assertThat(got).isEqualTo(new PrometheusSummary(summary));
 
         verify(summaryBuilder).quantile(0.001d, 1);
         verify(summaryBuilder).quantile(0.01d, 2);

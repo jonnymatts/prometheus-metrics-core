@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JmxMetricCounterTest {
+public class PrometheusCounterTest {
 
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
@@ -23,27 +23,27 @@ public class JmxMetricCounterTest {
     @Mock
     private Child counterChild;
 
-    private JmxMetricCounter jmxMetricCounter;
+    private PrometheusCounter prometheusCounter;
 
     @Before
     public void setUp() throws Exception {
-        jmxMetricCounter = new JmxMetricCounter(counter);
+        prometheusCounter = new PrometheusCounter(counter);
 
-        when(jmxMetricCounter.labels(BEAN_NAME, ATTRIBUTE_NAME)).thenReturn(counterChild);
+        when(prometheusCounter.labels(BEAN_NAME, ATTRIBUTE_NAME)).thenReturn(counterChild);
     }
 
     @Test
     public void registerCallsRegister() throws Exception {
-        final JmxMetricCounter got = jmxMetricCounter.register();
+        final PrometheusCounter got = prometheusCounter.register();
 
-        assertThat(got).isEqualTo(jmxMetricCounter);
+        assertThat(got).isEqualTo(prometheusCounter);
 
         verify(counter).register();
     }
 
     @Test
     public void incCallsIncWithTheCorrectLabels() throws Exception {
-        jmxMetricCounter.inc(BEAN_NAME, ATTRIBUTE_NAME);
+        prometheusCounter.inc(BEAN_NAME, ATTRIBUTE_NAME);
 
         verify(counterChild).inc(1.0);
     }
@@ -52,7 +52,7 @@ public class JmxMetricCounterTest {
     public void getCallsGetWithTheCorrectLabels() throws Exception {
         when(counterChild.get()).thenReturn(100d);
 
-        final double got = jmxMetricCounter.get(BEAN_NAME, ATTRIBUTE_NAME);
+        final double got = prometheusCounter.get(BEAN_NAME, ATTRIBUTE_NAME);
 
         assertThat(got).isEqualTo(100d);
     }
