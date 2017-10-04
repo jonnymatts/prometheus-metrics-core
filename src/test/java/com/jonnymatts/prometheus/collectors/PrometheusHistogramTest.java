@@ -14,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,9 +69,9 @@ public class PrometheusHistogramTest {
 
     @Test
     public void constructorAppliesConfigurationCorrectly() throws Exception {
-        when(histogramBuilder.name("jmx_metric_histogram_my_histogram")).thenReturn(histogramBuilder);
-        when(histogramBuilder.help(any())).thenReturn(histogramBuilder);
-        when(histogramBuilder.labelNames(any())).thenReturn(histogramBuilder);
+        when(histogramBuilder.name("my_histogram")).thenReturn(histogramBuilder);
+        when(histogramBuilder.help("description")).thenReturn(histogramBuilder);
+        when(histogramBuilder.labelNames("label1", "label2")).thenReturn(histogramBuilder);
         when(histogramBuilder.buckets(0.001d, 0.01d, 0.1d, 1d)).thenReturn(histogramBuilder);
         when(histogramBuilder.exponentialBuckets(0.001d, 10d, 5)).thenReturn(histogramBuilder);
         when(histogramBuilder.linearBuckets(0.01d, 30d, 10)).thenReturn(histogramBuilder);

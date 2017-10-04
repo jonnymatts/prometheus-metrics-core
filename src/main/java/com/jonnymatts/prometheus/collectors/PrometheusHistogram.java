@@ -23,10 +23,9 @@ public class PrometheusHistogram {
 
     public PrometheusHistogram(Histogram.Builder builder,
                                HistogramConfiguration configuration) {
-        final String histogramBaseName = "jmx_metric_histogram";
-        final String histogramName = configuration.getName() != null ?
-                histogramBaseName + "_" + configuration.getName() :
-                histogramBaseName;
+        builder.name(configuration.getName())
+                .help(configuration.getDescription())
+                .labelNames(configuration.getLabels());
 
         final List<Double> configurationBuckets = configuration.getBuckets();
         if(configurationBuckets != null) {
@@ -50,10 +49,6 @@ public class PrometheusHistogram {
                     linearBucketConfiguration.getCount()
             );
         }
-
-        builder.name(histogramName)
-                .help("JMX metrics backed by a histogram")
-                .labelNames("bean_name", "attribute_name");
 
         this.histogram = builder
                 .create();

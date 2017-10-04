@@ -23,7 +23,6 @@ public class PrometheusSummary {
 
     public PrometheusSummary(Builder builder,
                              SummaryConfiguration configuration) {
-
         builder.name(configuration.getName())
                 .help(configuration.getDescription())
                 .labelNames(configuration.getLabels());
