@@ -1,5 +1,6 @@
 package com.jonnymatts.prometheus.collectors;
 
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.Gauge.Child;
 import org.junit.Before;
@@ -18,6 +19,7 @@ public class PrometheusGaugeTest {
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
 
+    @Mock private CollectorRegistry collectorRegistry;
     @Mock private Gauge gauge;
     @Mock private Child gaugeChild;
 
@@ -37,6 +39,15 @@ public class PrometheusGaugeTest {
         assertThat(got).isEqualTo(prometheusGauge);
 
         verify(gauge).register();
+    }
+
+    @Test
+    public void registerCallsRegisterWithSuppliedRegister() throws Exception {
+        final PrometheusGauge got = prometheusGauge.register(collectorRegistry);
+
+        assertThat(got).isEqualTo(prometheusGauge);
+
+        verify(gauge).register(collectorRegistry);
     }
 
     @Test

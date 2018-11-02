@@ -2,6 +2,7 @@ package com.jonnymatts.prometheus.collectors;
 
 import com.jonnymatts.prometheus.configuration.QuantileConfiguration;
 import com.jonnymatts.prometheus.configuration.SummaryConfiguration;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
 import io.prometheus.client.Summary.Builder;
 import io.prometheus.client.Summary.Child;
@@ -22,6 +23,7 @@ public class PrometheusSummaryTest {
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
 
+    @Mock private CollectorRegistry collectorRegistry;
     @Mock private Summary summary;
     @Mock private Builder summaryBuilder;
     @Mock private Child summaryChild;
@@ -43,6 +45,15 @@ public class PrometheusSummaryTest {
         assertThat(got).isEqualTo(prometheusSummary);
 
         verify(summary).register();
+    }
+
+    @Test
+    public void registerCallsRegisterWithSuppliedRegister() throws Exception {
+        final PrometheusSummary got = prometheusSummary.register(collectorRegistry);
+
+        assertThat(got).isEqualTo(prometheusSummary);
+
+        verify(summary).register(collectorRegistry);
     }
 
     @Test

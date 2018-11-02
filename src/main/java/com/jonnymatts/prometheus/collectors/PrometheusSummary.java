@@ -3,6 +3,7 @@ package com.jonnymatts.prometheus.collectors;
 import com.jonnymatts.prometheus.configuration.QuantileConfiguration;
 import com.jonnymatts.prometheus.configuration.SummaryConfiguration;
 import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
 import io.prometheus.client.Summary.Builder;
 
@@ -75,6 +76,11 @@ public class PrometheusSummary {
 
     public PrometheusSummary register() {
         summary.register();
+        return this;
+    }
+
+    public PrometheusSummary register(CollectorRegistry registry) {
+        summary.register(registry);
         return this;
     }
 

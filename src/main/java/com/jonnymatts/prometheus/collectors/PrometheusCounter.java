@@ -1,6 +1,7 @@
 package com.jonnymatts.prometheus.collectors;
 
 import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Counter.Child;
 
@@ -47,6 +48,11 @@ public class PrometheusCounter {
 
     public PrometheusCounter register() {
         counter.register();
+        return this;
+    }
+
+    public PrometheusCounter register(CollectorRegistry registry) {
+        counter.register(registry);
         return this;
     }
 }

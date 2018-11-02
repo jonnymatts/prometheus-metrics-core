@@ -4,6 +4,7 @@ import com.jonnymatts.prometheus.configuration.ExponentialBucketConfiguration;
 import com.jonnymatts.prometheus.configuration.HistogramConfiguration;
 import com.jonnymatts.prometheus.configuration.LinearBucketConfiguration;
 import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Histogram;
 
 import java.util.List;
@@ -84,6 +85,11 @@ public class PrometheusHistogram {
 
     public PrometheusHistogram register() {
         histogram.register();
+        return this;
+    }
+
+    public PrometheusHistogram register(CollectorRegistry registry) {
+        histogram.register(registry);
         return this;
     }
 

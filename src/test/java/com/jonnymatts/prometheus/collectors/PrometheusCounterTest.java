@@ -1,5 +1,6 @@
 package com.jonnymatts.prometheus.collectors;
 
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Counter.Child;
 import org.junit.Before;
@@ -18,10 +19,9 @@ public class PrometheusCounterTest {
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
 
-    @Mock
-    private Counter counter;
-    @Mock
-    private Child counterChild;
+    @Mock private CollectorRegistry collectorRegistry;
+    @Mock private Counter counter;
+    @Mock private Child counterChild;
 
     private PrometheusCounter prometheusCounter;
 
@@ -39,6 +39,15 @@ public class PrometheusCounterTest {
         assertThat(got).isEqualTo(prometheusCounter);
 
         verify(counter).register();
+    }
+
+    @Test
+    public void registerCallsRegisterWithSuppliedRegister() throws Exception {
+        final PrometheusCounter got = prometheusCounter.register(collectorRegistry);
+
+        assertThat(got).isEqualTo(prometheusCounter);
+
+        verify(counter).register(collectorRegistry);
     }
 
     @Test

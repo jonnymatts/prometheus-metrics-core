@@ -1,6 +1,7 @@
 package com.jonnymatts.prometheus.collectors;
 
 import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.Gauge.Child;
 
@@ -55,6 +56,11 @@ public class PrometheusGauge {
 
     public PrometheusGauge register() {
         gauge.register();
+        return this;
+    }
+
+    public PrometheusGauge register(CollectorRegistry registry) {
+        gauge.register(registry);
         return this;
     }
 }

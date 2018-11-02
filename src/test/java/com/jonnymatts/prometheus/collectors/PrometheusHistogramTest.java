@@ -3,6 +3,7 @@ package com.jonnymatts.prometheus.collectors;
 import com.jonnymatts.prometheus.configuration.ExponentialBucketConfiguration;
 import com.jonnymatts.prometheus.configuration.HistogramConfiguration;
 import com.jonnymatts.prometheus.configuration.LinearBucketConfiguration;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Histogram;
 import io.prometheus.client.Histogram.Builder;
 import io.prometheus.client.Histogram.Child;
@@ -23,6 +24,7 @@ public class PrometheusHistogramTest {
     private static final String BEAN_NAME = "bean_name";
     private static final String ATTRIBUTE_NAME = "attribute_name";
 
+    @Mock private CollectorRegistry collectorRegistry;
     @Mock private Histogram histogram;
     @Mock private Child histogramChild;
     @Mock private Builder histogramBuilder;
@@ -44,6 +46,15 @@ public class PrometheusHistogramTest {
         assertThat(got).isEqualTo(prometheusHistogram);
 
         verify(histogram).register();
+    }
+
+    @Test
+    public void registerCallsRegisterWithSuppliedRegister() throws Exception {
+        final PrometheusHistogram got = prometheusHistogram.register(collectorRegistry);
+
+        assertThat(got).isEqualTo(prometheusHistogram);
+
+        verify(histogram).register(collectorRegistry);
     }
 
     @Test
