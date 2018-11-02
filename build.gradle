@@ -1,7 +1,7 @@
 ext {
     group 'com.jonnymatts.prometheus'
     version '0.2.1'
-    prometheus_client_version = '0.0.26'
+    prometheus_client_version = '0.5.0'
 }
 
 apply plugin: 'java'
